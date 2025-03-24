@@ -18,13 +18,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("isLoggedIn", JSON.stringify(true));
   };
 
-  // const logout = () => {
-  //   setIsLoggedIn(false);
-  //   localStorage.setItem("isLoggedIn", JSON.stringify(false));
-  // };
+  const logout = () => {
+    setIsLoggedIn(false);
+    localStorage.setItem("isLoggedIn", JSON.stringify(false));
+  };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login,  }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
