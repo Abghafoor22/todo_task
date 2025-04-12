@@ -1,37 +1,28 @@
 
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate from React Router
-
+import { useForm } from "react-hook-form";
 const Register = () => {
   const [users, setUsers] = useState([]);
-  const [username, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Create a navigate instance
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm()
 
-  const handlesubmit = (e) => {
-    e.preventDefault();
-    if (!username || !email || !password) {
+
+  const submit = (data) => {
+    if (!data.name || !data.email || !data.password) {
       alert("Please enter your details");
       return;
     }
-    if (password.length < 6) {
+    if (data.password.length < 6) {
       alert("Password should be atleast 6 characters");
       return;
     }
-    const data = {
-      username: username,
-      email: email,
-      password: password,
-    };
-
     setUsers([...users, data]);
     localStorage.setItem("users", JSON.stringify([...users, data]));
     console.log(users);
-
     navigate("/login");
   };
-
+  
 
   return (
     <div className="flex items-center justify-center min-h-[90vh] ">
@@ -43,15 +34,14 @@ const Register = () => {
           <p className="text-gray-300">Join our community</p>
         </div>
 
-        <form onSubmit={handlesubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(submit)} className="space-y-6">
           <div className="space-y-4">
             <div className="relative">
               <input
                 type="text"
                 name="name"
                 placeholder="Full name"
-                value={username}
-                onChange={(e) => setUserName(e.target.value)}
+                {...register("name", { required: true })}
                 className="w-full pl-12 pr-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
               />
               <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,8 +54,7 @@ const Register = () => {
                 type="email"
                 name="email"
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email", { required: true })}
                 className="w-full pl-12 pr-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
               />
               <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,8 +67,7 @@ const Register = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register("password", { required: true })}
                 className="w-full pl-12 pr-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
               />
               <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

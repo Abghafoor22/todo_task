@@ -1,22 +1,24 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
-
+import { useForm } from "react-hook-form";
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const { register, handleSubmit } = useForm()
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const submit = (data) => {
+    console.log(data)
+    // e.preventDefault();
     // Retrieve registered users from localStorage
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
     // Check if the user exists with matching email and password
     const foundUser = storedUsers.find(
-      (user) => user.email === email && user.password === password
+      (user) => user.email === data.email && user.password === data.password
+      // (user) => user.email === data.email && user.password === data.password
     );
 
     if (foundUser) {
@@ -24,7 +26,7 @@ const Login = () => {
       login();
       navigate("/"); // Redirect to the protected home route
     } else {
-      setError("User not found. Please register first or check your credentials.");
+      setError("User not found. Verify your details or sign up first.");
     }
   };
 
@@ -47,14 +49,21 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(submit)} className="space-y-6">
           <div className="space-y-4">
             <div className="relative">
               <input
                 type="email"
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+
+                {...register("email", {
+                  required: true,
+                  validate: {
+                    matchPatern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                      "Email address must be a valid address",
+                  }
+
+                })}
                 className="w-full pl-12 pr-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
               />
               <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,8 +75,9 @@ const Login = () => {
               <input
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register("password", {
+                  required: true
+                })}
                 className="w-full pl-12 pr-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all"
               />
               <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
